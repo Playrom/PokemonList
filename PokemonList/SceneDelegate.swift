@@ -11,35 +11,14 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    var router: Router = Router()
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        let viewController = PokemonTableViewController(pokemon: nil, image: nil)
-        var image: UIImage?
-        var pokemon: Pokemon?
-        
-        
-        PokeDownloader.shared.getPokemon(1) { response in
-            switch response {
-            case .success( let pok ):
-                pokemon = pok
-                DispatchQueue.main.async {
-                    viewController.configure(pokemon: pokemon, image: image)
-                }
-            case .fail:
-                break
-            }
-        }
-        
-        PokeDownloader.shared.getImage(for: 1) { img in
-            image = img
-            DispatchQueue.main.async {
-                viewController.configure(pokemon: pokemon, image: image)
-            }
-        }
+        let viewController = PokemonListTableViewController(with: router)
 
         let navController = UINavigationController(rootViewController: viewController)
 

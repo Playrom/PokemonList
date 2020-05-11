@@ -57,6 +57,7 @@ class StatCell: UITableViewCell {
         view.axis = .vertical
         view.distribution = .fill
         view.alignment = .leading
+        view.spacing = 8
         return view
     }()
     
@@ -66,6 +67,7 @@ class StatCell: UITableViewCell {
         view.axis = .horizontal
         view.distribution = .fillEqually
         view.alignment = .center
+        view.spacing = 8
         return view
     }()
     
@@ -75,6 +77,7 @@ class StatCell: UITableViewCell {
         view.axis = .vertical
         view.distribution = .fill
         view.alignment = .leading
+        view.spacing = 8
         return view
     }()
     
@@ -84,6 +87,7 @@ class StatCell: UITableViewCell {
         view.axis = .vertical
         view.distribution = .fill
         view.alignment = .trailing
+        view.spacing = 8
         return view
     }()
     

@@ -34,6 +34,7 @@ class AbilityCell: UITableViewCell {
         view.axis = .vertical
         view.distribution = .fill
         view.alignment = .leading
+        view.spacing = 8
         return view
     }()
     

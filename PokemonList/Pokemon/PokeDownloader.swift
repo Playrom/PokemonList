@@ -38,7 +38,7 @@ class PokeDownloader {
     
     private init() {
         do {
-            self.cacheFolder = try FileManager.default.url(for: .userDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+            self.cacheFolder = try FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         } catch {
             print(error)
             self.cacheFolder = FileManager.default.temporaryDirectory
@@ -47,7 +47,7 @@ class PokeDownloader {
     
     private func getPokemonInternal<T: Codable>(url: URL, in group: DispatchGroup, completitionHandler: @escaping (T?) -> (Void)){
         group.enter()
-        self.download(url) { (response: PokeResponse<T>) in
+        self.download(url, useCache: true) { (response: PokeResponse<T>) in
             switch response {
             case .success(let downloadedType):
                 completitionHandler(downloadedType)
@@ -65,9 +65,45 @@ class PokeDownloader {
         }
     }
     
-    func getPokemon(_ id: Int, completionHandler: @escaping (PokeResponse<Pokemon>) -> Void) {
-            let url = self.baseUrl.appendingPathComponent(Endpoint.pokemon.rawValue).appendingPathComponent(id.description)
-            self.download(url) { (response: PokeResponse<PKPokemon>) in
+    func getPokemons(offset: Int, limit: Int, completionHandler: @escaping (PokeResponse<[Pokemon]>) -> Void) {
+        let url = self.baseUrl.appendingPathComponent(Endpoint.pokemon.rawValue)
+            .appending("offset", value: offset.description)
+            .appending("limit", value: limit.description)
+        
+        self.download(url, useCache: false) { (response: PokeResponse<PKList>) in
+            DispatchQueue.global(qos: .userInitiated).async {
+                let group = DispatchGroup()
+                switch response {
+                case .success(let json):
+                    var pokemons: [Pokemon] = []
+                    
+                    for pokeurl in json.results {
+                        group.enter()
+                        self.getPokemon(pokeurl.url) { (pokemonResponse: PokeResponse<Pokemon>) in
+                            switch pokemonResponse {
+                            case .success(let pokemon):
+                                pokemons.append(pokemon)
+                            default:
+                                break
+                            }
+                            group.leave()
+                        }
+                    }
+                    
+                    group.wait()
+                    
+                    completionHandler(.success(pokemons))
+                    break
+                case .fail(let error):
+                    completionHandler(.fail(error))
+                }
+                
+            }
+        }
+    }
+    
+    func getPokemon(_ url: URL, completionHandler: @escaping (PokeResponse<Pokemon>) -> Void) {
+            self.download(url, useCache: true) { (response: PokeResponse<PKPokemon>) in
                 DispatchQueue.global(qos: .userInitiated).async {
                     let group = DispatchGroup()
                     switch response {
@@ -119,7 +155,7 @@ class PokeDownloader {
     }
     
     func getImage(for pokemonId: Int, completionHandler: @escaping (UIImage?) -> Void) {
-        self.download(imageFor: pokemonId) { response in
+        self.download(imageFor: pokemonId, useCache: true) { response in
             switch response {
             case .success(let image):
                 completionHandler(image)
@@ -183,9 +219,9 @@ class PokeDownloader {
         return false
     }
 
-    private func download<T: Codable>(_ url: URL, completionHandler: @escaping (PokeResponse<T>) -> Void) {
+    private func download<T: Codable>(_ url: URL, useCache: Bool, completionHandler: @escaping (PokeResponse<T>) -> Void) {
         
-        if let cached = self.get(cached: url, ofType: T.self) {
+        if useCache, let cached = self.get(cached: url, ofType: T.self) {
             completionHandler(.success(cached))
             return
         }
@@ -227,9 +263,9 @@ class PokeDownloader {
         task.resume()
     }
     
-    private func download(imageFor pokemonId: Int, completionHandler: @escaping (PokeResponse<UIImage>) -> Void) {
+    private func download(imageFor pokemonId: Int, useCache: Bool, completionHandler: @escaping (PokeResponse<UIImage>) -> Void) {
         let imageUrl = self.baseImageUrl.appendingPathComponent("\(pokemonId.description).png")
-        if let cached = self.get(image: imageUrl){
+        if useCache, let cached = self.get(image: imageUrl){
             completionHandler(.success(cached))
             return
         }

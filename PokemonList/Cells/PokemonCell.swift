@@ -1,5 +1,5 @@
 //
-//  HeaderPokemonCell.swift
+//  PokemonCell.swift
 //  PokemonList
 //
 //  Created by Giorgio Romano on 11/05/2020.
@@ -8,8 +8,8 @@
 
 import UIKit
 
-class HeaderPokemonCell: UITableViewCell {
-
+class PokemonCell: UITableViewCell {
+    
     lazy var pokemonImageView: UIImageView = {
         var view = UIImageView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -20,7 +20,7 @@ class HeaderPokemonCell: UITableViewCell {
     lazy var pokemonNameLabel: UILabel = {
         var view = UILabel()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.font = UIFont.preferredFont(forTextStyle: .largeTitle)
+        view.font = UIFont.preferredFont(forTextStyle: .headline)
         view.textColor = .label
         view.numberOfLines = 0
         return view
@@ -29,7 +29,7 @@ class HeaderPokemonCell: UITableViewCell {
     lazy var pokemonType1Label: UILabel = {
         var view = UILabel()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.font = UIFont.preferredFont(forTextStyle: .headline)
+        view.font = UIFont.preferredFont(forTextStyle: .subheadline)
         view.textColor = .secondaryLabel
         return view
     }()
@@ -37,7 +37,7 @@ class HeaderPokemonCell: UITableViewCell {
     lazy var pokemonType2Label: UILabel = {
         var view = UILabel()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.font = UIFont.preferredFont(forTextStyle: .headline)
+        view.font = UIFont.preferredFont(forTextStyle: .subheadline)
         view.textColor = .secondaryLabel
         return view
     }()
@@ -80,14 +80,17 @@ class HeaderPokemonCell: UITableViewCell {
         self.verticalStack.addArrangedSubview(pokemonType1Label)
         self.verticalStack.addArrangedSubview(pokemonType2Label)
         
-        self.mainStack.addArrangedSubview(verticalStack)
         self.mainStack.addArrangedSubview(pokemonImageView)
+        self.mainStack.addArrangedSubview(verticalStack)
         
         self.contentView.addSubview(mainStack)
         
+        self.pokemonImageView.layer.cornerRadius = 35
+        self.pokemonImageView.backgroundColor = .systemGroupedBackground
+        
         NSLayoutConstraint.activate([
-            self.pokemonImageView.widthAnchor.constraint(equalToConstant: 150),
-            self.pokemonImageView.heightAnchor.constraint(equalToConstant: 150),
+            self.pokemonImageView.widthAnchor.constraint(equalToConstant: 70),
+            self.pokemonImageView.heightAnchor.constraint(equalToConstant: 70),
             
             self.mainStack.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 20),
             self.mainStack.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -20),
@@ -102,6 +105,14 @@ class HeaderPokemonCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
+    override func prepareForReuse() {
+        self.pokemonNameLabel.text = nil
+        self.pokemonType1Label.text = nil
+        self.pokemonType2Label.text = nil
+        self.pokemonImageView.image = nil
+        self.pokemonImageView.backgroundColor = .systemGroupedBackground
+    }
+    
     func configure(with pokemon: Pokemon, image: UIImage?) {
         self.pokemonNameLabel.text = pokemon.species.localizedName(for: "it")
         
@@ -113,7 +124,13 @@ class HeaderPokemonCell: UITableViewCell {
             self.pokemonType2Label.text = pokemon.types[1].localizedName(for: "it")
         }
         
-        self.pokemonImageView.image = image
+        if let img = image {
+            self.pokemonImageView.image = img
+            self.pokemonImageView.backgroundColor = .clear
+        } else {
+            self.pokemonImageView.image = nil
+            self.pokemonImageView.backgroundColor = .systemGroupedBackground
+        }
     }
 
 }
