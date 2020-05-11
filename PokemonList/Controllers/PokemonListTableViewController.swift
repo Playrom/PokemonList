@@ -8,11 +8,19 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class PokemonListTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        PokeDownloader.shared.getPokemon(1) { response in
+            switch response {
+            case .success( let type ):
+                 print(type)
+            case .fail:
+                break
+            }
+        }
     }
 
 
