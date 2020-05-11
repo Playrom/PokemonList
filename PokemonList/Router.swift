@@ -9,12 +9,10 @@
 import UIKit
 
 class Router {
-    var currentViewController: UIViewController? {
-        return UIApplication.shared.keyWindow?.rootViewController
-    }
+    var rootViewController: UIViewController?
     
     var navigationViewController: UINavigationController? {
-        return self.currentViewController as? UINavigationController
+        return self.rootViewController as? UINavigationController
     }
     
     func present(_ pokemon: Pokemon, with image: UIImage?) {

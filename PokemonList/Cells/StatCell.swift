@@ -100,12 +100,10 @@ class StatCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-    
     func setup() {
+        self.statBaseLabel.text = "Valore Base"
+        self.statEffortLabel.text = "Costo"
+
         self.verticalLeadingStack.addArrangedSubview(statBaseLabel)
         self.verticalLeadingStack.addArrangedSubview(statBaseValueLabel)
         
@@ -132,20 +130,16 @@ class StatCell: UITableViewCell {
         ])
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    override func prepareForReuse() {
+        self.statNameLabel.text = nil
+        self.statBaseValueLabel.text = nil
+        self.statEffortValueLabel.text = nil
     }
     
-    func configure(with stat: PokemonStat) {
-        self.statNameLabel.text = stat.localizedName(for:  "it")
-        
-        self.statBaseLabel.text = "Valore Base"
-        self.statBaseValueLabel.text = stat.baseStat.description
-        
-        self.statEffortLabel.text = "Costo"
-        self.statEffortValueLabel.text = stat.effort.description
+    func configure(with model: StatViewModel) {
+        self.statNameLabel.text = model.name
+        self.statBaseValueLabel.text = model.baseValue
+        self.statEffortValueLabel.text = model.effort
     }
 
 }

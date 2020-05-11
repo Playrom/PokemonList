@@ -65,13 +65,14 @@ class PokemonListTableViewController: UITableViewController {
         }
         let pokemon = self.pokemons[indexPath.row]
         if let image = cachedImages[pokemon.id] {
-            cell.configure(with: pokemon, image: image)
+            cell.configure(with: PokemonViewModel(pokemon: pokemon, image: image))
         } else {
-            cell.configure(with: pokemon, image: nil)
+            cell.configure(with: PokemonViewModel(pokemon: pokemon, image: nil))
         }
         return cell
     }
     
+    // Fetch an image and then reload the table
     private func downloadImage(for pokemonId: Int) {
         PokeDownloader.shared.getImage(for: pokemonId) { image in
             if let img = image {
@@ -84,6 +85,9 @@ class PokemonListTableViewController: UITableViewController {
     }
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        // If the content bottom position is 200 points before bottom then load another page of the api
+        // This effect appens only when no download are already in background
+        // To prevent multiple triggers before the add of the rows
         if !isInfiniteScrollLocked {
             let currentPosition = scrollView.contentOffset.y + scrollView.frame.height
             let refreshHeight = scrollView.contentSize.height - 200

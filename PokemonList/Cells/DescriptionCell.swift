@@ -28,11 +28,6 @@ class DescriptionCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-    
     func setup() {
         
         self.contentView.addSubview(descriptionLabel)
@@ -44,15 +39,13 @@ class DescriptionCell: UITableViewCell {
             self.descriptionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20)
         ])
     }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    
+    func configure(with model: DescriptionViewModel) {
+        self.descriptionLabel.text = model.pokemonDescription
     }
     
-    func configure(with pokemon: Pokemon) {
-        self.descriptionLabel.text = pokemon.species.localizedFlavorText(for: "it")
+    override func prepareForReuse() {
+        self.descriptionLabel.text = nil
     }
 
 }

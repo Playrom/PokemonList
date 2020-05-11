@@ -47,11 +47,6 @@ class AbilityCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-    
     func setup() {
         self.verticalStack.addArrangedSubview(abilityNameLabel)
         self.verticalStack.addArrangedSubview(abilityDescriptionlabel)
@@ -65,16 +60,15 @@ class AbilityCell: UITableViewCell {
             self.verticalStack.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20)
         ])
     }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    
+    func configure(with model: AbilityViewModel) {
+        self.abilityNameLabel.text = model.name
+        self.abilityDescriptionlabel.text = model.description
     }
     
-    func configure(with ability: PokemonAbility) {
-        self.abilityNameLabel.text = ability.localizedName(for: "it")
-        self.abilityDescriptionlabel.text = ability.localizedFlavorText(for: "it")
+    override func prepareForReuse() {
+        self.abilityNameLabel.text = nil
+        self.abilityDescriptionlabel.text = nil
     }
 
 }

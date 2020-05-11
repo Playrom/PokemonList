@@ -91,25 +91,25 @@ class PokemonTableViewController: UITableViewController {
             guard let cell = self.tableView.dequeueReusableCell(withIdentifier: ReuseIdentifier.header.rawValue, for: indexPath) as? HeaderPokemonCell else {
                 return UITableViewCell()
             }
-            cell.configure(with: pokemon, image: self.image)
+            cell.configure(with: PokemonViewModel(pokemon: pokemon, image: image))
             return cell
         case 1:
             guard let cell = self.tableView.dequeueReusableCell(withIdentifier: ReuseIdentifier.description.rawValue, for: indexPath) as? DescriptionCell else {
                 return UITableViewCell()
             }
-            cell.configure(with: pokemon)
+            cell.configure(with: DescriptionViewModel(pokemon: pokemon))
             return cell
         case 2:
            guard let cell = self.tableView.dequeueReusableCell(withIdentifier: ReuseIdentifier.ability.rawValue, for: indexPath) as? AbilityCell else {
                return UITableViewCell()
            }
-           cell.configure(with: pokemon.abilities[indexPath.row])
+           cell.configure(with: AbilityViewModel(ability: pokemon.abilities[indexPath.row]))
            return cell
        case 3:
           guard let cell = self.tableView.dequeueReusableCell(withIdentifier: ReuseIdentifier.stat.rawValue, for: indexPath) as? StatCell else {
               return UITableViewCell()
           }
-          cell.configure(with: pokemon.stats[indexPath.row])
+          cell.configure(with: StatViewModel(stat: pokemon.stats[indexPath.row]))
           return cell
         default:
             return UITableViewCell()

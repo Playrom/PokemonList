@@ -69,12 +69,7 @@ class PokemonCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-    
+
     func setup() {
         self.verticalStack.addArrangedSubview(pokemonNameLabel)
         self.verticalStack.addArrangedSubview(pokemonType1Label)
@@ -99,12 +94,6 @@ class PokemonCell: UITableViewCell {
         ])
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
-    
     override func prepareForReuse() {
         self.pokemonNameLabel.text = nil
         self.pokemonType1Label.text = nil
@@ -113,18 +102,13 @@ class PokemonCell: UITableViewCell {
         self.pokemonImageView.backgroundColor = .systemGroupedBackground
     }
     
-    func configure(with pokemon: Pokemon, image: UIImage?) {
-        self.pokemonNameLabel.text = pokemon.species.localizedName(for: "it")
+    func configure(with model: PokemonViewModel) {
+        self.pokemonNameLabel.text = model.pokemonName
+        self.pokemonType1Label.text = model.pokemonType1
+        self.pokemonType2Label.text = model.pokemonType2
         
-        if pokemon.types.count > 0 {
-            self.pokemonType1Label.text = pokemon.types[0].localizedName(for: "it")
-        }
-        
-        if pokemon.types.count > 1 {
-            self.pokemonType2Label.text = pokemon.types[1].localizedName(for: "it")
-        }
-        
-        if let img = image {
+        // If image not present use a placeholder
+        if let img = model.pokemonImage {
             self.pokemonImageView.image = img
             self.pokemonImageView.backgroundColor = .clear
         } else {

@@ -26,16 +26,6 @@ protocol Flavorable {
     var flavorTextEntries: [PokemonFlavor] { get }
 }
 
-struct PokemonFlavor: Codable {
-    var flavorText: String
-    var language: PKUrl
-    
-    enum CodingKeys: String, CodingKey {
-        case flavorText = "flavor_text"
-        case language
-    }
-}
-
 extension Flavorable {
     func localizedFlavorText(for language: String) -> String? {
         let found = self.flavorTextEntries.first { (searchingLanguage) -> Bool in
